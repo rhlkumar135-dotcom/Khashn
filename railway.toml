@@ -2,11 +2,11 @@ name = "sqftlab"
 description = "sqftLab - UAE Property Intelligence Platform"
 
 [build]
-builder = "nixpacks"
-nixpacksConfigPath = "nixpacks.toml"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "bun run railway:setup && bun run start"
+startCommand = "sh -c \"bun run railway:setup && bun run start\""
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
