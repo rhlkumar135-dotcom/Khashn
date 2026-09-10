@@ -18,7 +18,7 @@
     "db:push": "bun x --bun prisma db push",
     "db:studio": "bun x --bun prisma studio",
     "postinstall": "bun x prisma generate",
-    "railway:setup": "bun run db:push && bun run scripts/seed-pg.ts"
+    "railway:setup": "bash scripts/railway-setup.sh"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^7.3.0",

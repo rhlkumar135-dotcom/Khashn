@@ -218,7 +218,7 @@ function HeatmapDashboard({ setPage, setSelectedCommunity }: { setPage: (p: Page
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/communities?emirate=${emirate}&search=${search}`)
+    fetch(`/api/khashn/communities?emirate=${emirate}&search=${search}`)
       .then(r => r.json())
       .then(d => { setCommunities(d.communities || d.items || []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -386,10 +386,10 @@ function CommunityDetail({ slug, setPage }: { slug: string; setPage: (p: Page) =
   useEffect(() => {
     setLoading(true)
     Promise.all([
-      fetch(`/api/communities/${slug}`).then(r => r.json()),
-      fetch(`/api/communities/${slug}/trend?period=12m`).then(r => r.json()),
-      fetch(`/api/communities/${slug}/transactions?limit=20`).then(r => r.json()),
-      fetch(`/api/communities/${slug}/listings?purpose=sale`).then(r => r.json()),
+      fetch(`/api/khashn/communities/${slug}`).then(r => r.json()),
+      fetch(`/api/khashn/communities/${slug}/trend?period=12m`).then(r => r.json()),
+      fetch(`/api/khashn/communities/${slug}/transactions?limit=20`).then(r => r.json()),
+      fetch(`/api/khashn/communities/${slug}/listings?purpose=sale`).then(r => r.json()),
       fetch('/api/khashn/rates/exchange').then(r => r.json()),
     ]).then(([cData, tData, txData, lData, exData]) => {
       const c = cData.community || cData
@@ -611,7 +611,7 @@ function ListingsFeed({ setPage, setSelectedCommunity }: { setPage: (p: Page) =>
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/listings?purpose=${purpose}${dealsOnly ? '&deals=true' : ''}`)
+    fetch(`/api/khashn/listings?purpose=${purpose}${dealsOnly ? '&deals=true' : ''}`)
       .then(r => r.json())
       .then(d => { setListings(d.listings || []); setLoading(false) })
       .catch(() => setLoading(false))

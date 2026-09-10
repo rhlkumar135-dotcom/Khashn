@@ -1,10 +1,13 @@
+name = "khashn"
+description = "Khashn - UAE Property Intelligence Platform"
+
 [build]
 builder = "nixpacks"
-buildCommand = "bun install && bun x prisma generate && bun run build"
+nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
-startCommand = "bun x prisma db push --skip-generate && bun run scripts/seed-pg.ts && bun run server.tsx"
-healthcheckPath = "/health"
+startCommand = "bun run railway:setup && bun run start"
+healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
