@@ -1,14 +1,17 @@
 #!/bin/bash
 # Railway build script — swaps schema to postgresql and regenerates everything
-set -e
+set -ex
 
 echo "=== sqftLab Railway Build ==="
+echo "PWD: $(pwd)"
+echo "DATABASE_URL set: $([ -n "$DATABASE_URL" ] && echo YES || echo NO)"
 
 # If DATABASE_URL is set, switch schema to PostgreSQL
 if [ -n "$DATABASE_URL" ]; then
   echo "PostgreSQL detected — switching schema provider..."
   sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
-  echo "Schema switched to PostgreSQL"
+  echo "Schema after swap:"
+  head -12 prisma/schema.prisma
 fi
 
 # Install deps (skip postinstall to avoid generating with wrong provider)
@@ -19,10 +22,12 @@ bun install --ignore-scripts
 echo "Regenerating Prisma client..."
 rm -rf src/generated/prisma
 bun x prisma generate
+echo "Generated files:"
+ls -la src/generated/prisma/ 2>/dev/null || echo "NO GENERATED FILES!"
 
 # Run Shogo generate
 echo "Running Shogo generate..."
-bun run generate || true
+bun run generate || echo "Shogo generate failed (non-fatal)"
 
 # Build the frontend
 echo "Building frontend..."
