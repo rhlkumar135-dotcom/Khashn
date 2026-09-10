@@ -13,7 +13,7 @@ if [ -n "$DATABASE_URL" ]; then
 fi
 
 echo "Pushing schema..."
-bun x --bun prisma db push 2>/dev/null || bun x --bun prisma db push
+bun x --bun prisma db push --accept-data-loss 2>/dev/null || bun x --bun prisma db push --accept-data-loss
 
 echo "Seeding database..."
 bun run scripts/seed-pg.ts
