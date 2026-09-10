@@ -11,7 +11,10 @@ const isPostgres = databaseUrl.startsWith('postgresql') || databaseUrl.startsWit
 
 function createPrismaClient() {
   if (isPostgres) {
+    const { PrismaPg } = require('@prisma/adapter-pg')
+    const adapter = new PrismaPg({ connectionString: databaseUrl })
     return new PrismaClient({
+      adapter,
       log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
     })
   }
