@@ -9,3 +9,4 @@ memory/
 .DS_Store
 .shogo/
 src/generated/
+.shogo-cwd-*
