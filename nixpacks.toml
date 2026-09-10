@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["bun"]
+
+[phases.install]
+cmds = ["bun install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["bun x prisma generate", "bun run build"]
+
+[start]
+cmd = "bun x prisma db push --skip-generate && bun run scripts/seed-pg.ts && bun run server.tsx"

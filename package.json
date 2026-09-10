@@ -1,7 +1,8 @@
 {
-  "name": "project",
-  "version": "0.1.0",
+  "name": "khashn",
+  "version": "1.0.0",
   "private": true,
+  "description": "Khashn - UAE Property Intelligence Platform",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
@@ -13,11 +14,11 @@
     "start": "bun run server.tsx",
     "generate": "bun ./node_modules/@shogo-ai/sdk/bin/cli.mjs generate",
     "db:generate": "bun x --bun prisma generate",
-    "db:migrate:dev": "bun x --bun prisma migrate dev",
     "db:migrate:deploy": "bun x --bun prisma migrate deploy",
     "db:push": "bun x --bun prisma db push",
-    "db:reset": "bun x --bun prisma db push --force-reset --accept-data-loss",
-    "db:studio": "bun x --bun prisma studio"
+    "db:studio": "bun x --bun prisma studio",
+    "postinstall": "bun x prisma generate",
+    "railway:setup": "bun run db:push && bun run scripts/seed-pg.ts"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^7.3.0",
