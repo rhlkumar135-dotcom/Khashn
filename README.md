@@ -55,15 +55,44 @@ bun run dev
 
 ## Deployment
 
-### Railway (Recommended)
+### Railway + GoDaddy (Production)
 
-1. Push to GitHub
-2. Connect Railway to your GitHub repo
-3. Add a PostgreSQL database service in Railway
-4. Set environment variables:
-   - `DATABASE_URL` — PostgreSQL connection string
-   - `NODE_ENV=production`
-5. Railway auto-deploys on push to `main`
+#### Step 1: Deploy to Railway
+1. Go to [railway.app/new](https://railway.app/new)
+2. Click **"Deploy from GitHub repo"** → select `rhlkumar135-dotcom/Khashn`
+3. Wait for initial build (first deploy takes ~2-3 minutes)
+
+#### Step 2: Add PostgreSQL Database
+1. In the Railway project dashboard, click **"+ New"** (top-left)
+2. Select **"Database"** → **"PostgreSQL"**
+3. Wait for it to provision (~30 seconds)
+
+#### Step 3: Connect Database to App
+1. Click on your **Khashn** service
+2. Go to **"Variables"** tab
+3. Add this variable:
+   - **Name:** `DATABASE_URL`
+   - **Value:** `${{Postgres.DATABASE_URL}}`
+4. Click **"Save"** — Railway auto-redeploys with the database connected
+
+#### Step 4: Add Custom Domain (sqftlab.com)
+1. In your Khashn service, go to **"Settings"** tab
+2. Under **"Networking"** → click **"Generate Domain"** first (to get a `.up.railway.app` URL)
+3. Then click **"Custom Domain"** → enter `sqftlab.com`
+4. Railway will show you DNS records to configure
+
+#### Step 5: Configure GoDaddy DNS
+1. Log in to [GoDaddy](https://dcc.godaddy.com)
+2. Find **sqftlab.com** → click **DNS / Manage DNS**
+3. Add the DNS records Railway provided:
+   - **Type:** CNAME | **Name:** @ | **Value:** `your-service.up.railway.app` | **TTL:** 600
+   - **Type:** CNAME | **Name:** www | **Value:** `your-service.up.railway.app` | **TTL:** 600
+4. Save and wait 5-15 minutes for propagation
+5. Railway auto-verifies and provisions SSL certificate
+
+#### Step 6: Verify
+1. Visit **https://sqftlab.com** — should load the Khashn platform
+2. Check all pages: Heatmap, Communities, Listings, Portfolio, Calculator
 
 ### Manual
 
