@@ -10,3 +10,7 @@ memory/
 .shogo/
 src/generated/
 .shogo-cwd-*
+-e 
+.memory-index.db
+.memory-index.db-wal
+.memory-index.db-shm
