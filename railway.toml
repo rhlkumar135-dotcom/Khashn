@@ -1,5 +1,5 @@
-name = "khashn"
-description = "Khashn - UAE Property Intelligence Platform"
+name = "sqftlab"
+description = "sqftLab - UAE Property Intelligence Platform"
 
 [build]
 builder = "nixpacks"
@@ -10,7 +10,7 @@ startCommand = "bun run railway:setup && bun run start"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3
+restartPolicyMaxRetries = 5
 
 [env]
 NODE_ENV = "production"
