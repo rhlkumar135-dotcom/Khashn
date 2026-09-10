@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+prisma/dev.db
+prisma/dev.db-journal
+memory/
+*.log
+.DS_Store
+.shogo/
+src/generated/
