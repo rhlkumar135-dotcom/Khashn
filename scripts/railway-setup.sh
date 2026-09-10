@@ -1,22 +1,14 @@
 #!/bin/bash
-# Railway startup script — switches provider, pushes schema, seeds database
-set -ex
+# Railway startup: push schema, seed, start server
+set -e
 
-echo "=== sqftLab Railway Setup ==="
+echo "=== sqftLab Railway Startup ==="
 
-if [ -n "$DATABASE_URL" ]; then
-  echo "PostgreSQL detected — updating schema provider..."
-  sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
-  echo "Regenerating Prisma client for PostgreSQL..."
-  rm -rf src/generated/prisma
-  bun x prisma generate
-fi
+echo "Step 1: Pushing schema to database..."
+bun x prisma db push --accept-data-loss 2>&1 || echo "Schema push done (with warnings)"
 
-echo "Pushing schema to database..."
-bun x prisma db push --accept-data-loss 2>&1 || echo "Schema push completed with warnings"
+echo "Step 2: Seeding database..."
+bun run scripts/seed-pg.ts 2>&1 || echo "Seed completed (data may already exist)"
 
-echo "Seeding database..."
-bun run scripts/seed-pg.ts 2>&1 || echo "Seed skipped (data may already exist)"
-
-echo "Starting server..."
-bun run server.tsx
+echo "Step 3: Starting server on port ${PORT:-8080}..."
+exec bun run server.tsx
