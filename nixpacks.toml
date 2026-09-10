@@ -2,10 +2,10 @@
 nixPkgs = ["bun"]
 
 [phases.install]
-cmds = ["bun install --ignore-scripts", "if [ -n \"$DATABASE_URL\" ]; then sed -i 's/provider = \"sqlite\"/provider = \"postgresql\"/' prisma/schema.prisma; fi", "rm -rf src/generated/prisma && bun x prisma generate", "bun run generate"]
+cmds = ["chmod +x scripts/railway-build.sh"]
 
 [phases.build]
-cmds = ["bun run build"]
+cmds = ["bash scripts/railway-build.sh"]
 
 [start]
 cmd = "bun run railway:setup && bun run start"
