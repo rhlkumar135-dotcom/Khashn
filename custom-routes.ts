@@ -5,7 +5,7 @@ const app = new Hono()
 
 // ─── Communities ──────────────────────────────────────────────────────────────
 
-app.get('/khashn/communities', async (c) => {
+app.get('/sqftlab/communities', async (c) => {
   const emirate = c.req.query('emirate')
   const search = c.req.query('search')
   const where: Record<string, unknown> = {}
@@ -27,7 +27,7 @@ app.get('/khashn/communities', async (c) => {
   return c.json({ communities })
 })
 
-app.get('/khashn/communities/:slug', async (c) => {
+app.get('/sqftlab/communities/:slug', async (c) => {
   const slug = c.req.param('slug')
   const community = await prisma.community.findUnique({
     where: { slug },
@@ -40,7 +40,7 @@ app.get('/khashn/communities/:slug', async (c) => {
   return c.json({ community })
 })
 
-app.get('/khashn/communities/:slug/transactions', async (c) => {
+app.get('/sqftlab/communities/:slug/transactions', async (c) => {
   const slug = c.req.param('slug')
   const page = parseInt(c.req.query('page') || '1')
   const limit = parseInt(c.req.query('limit') || '50')
@@ -67,7 +67,7 @@ app.get('/khashn/communities/:slug/transactions', async (c) => {
   return c.json({ transactions, total, page, limit, pages: Math.ceil(total / limit) })
 })
 
-app.get('/khashn/communities/:slug/listings', async (c) => {
+app.get('/sqftlab/communities/:slug/listings', async (c) => {
   const slug = c.req.param('slug')
   const purpose = c.req.query('purpose') || 'sale'
   const beds = c.req.query('beds')
@@ -90,7 +90,7 @@ app.get('/khashn/communities/:slug/listings', async (c) => {
 
 // ─── Price trend (simulated monthly data) ────────────────────────────────────
 
-app.get('/khashn/communities/:slug/trend', async (c) => {
+app.get('/sqftlab/communities/:slug/trend', async (c) => {
   const slug = c.req.param('slug')
   const period = c.req.query('period') || '12m'
   const community = await prisma.community.findUnique({ where: { slug } })
@@ -117,7 +117,7 @@ app.get('/khashn/communities/:slug/trend', async (c) => {
 
 // ─── Yield Calculator ────────────────────────────────────────────────────────
 
-app.post('/khashn/yield/calculate', async (c) => {
+app.post('/sqftlab/yield/calculate', async (c) => {
   const body = await c.req.json()
   const { purchasePrice, annualRent, serviceCharge, mortgageEnabled, mortgageRate, mortgageTerm, downPaymentPct } = body
 
@@ -158,7 +158,7 @@ app.post('/khashn/yield/calculate', async (c) => {
 
 // ─── Mortgage Simulator ──────────────────────────────────────────────────────
 
-app.post('/khashn/mortgage/simulate', async (c) => {
+app.post('/sqftlab/mortgage/simulate', async (c) => {
   const body = await c.req.json()
   const { price, downPaymentPct, ratePct, termYears } = body
 
@@ -210,7 +210,7 @@ app.post('/khashn/mortgage/simulate', async (c) => {
 
 // ─── Exchange Rates ──────────────────────────────────────────────────────────
 
-app.get('/khashn/rates/exchange', (c) => {
+app.get('/sqftlab/rates/exchange', (c) => {
   return c.json({
     AED_INR: 22.68,
     AED_USD: 0.2723,
@@ -223,7 +223,7 @@ app.get('/khashn/rates/exchange', (c) => {
 
 const DEMO_USER_ID = 'cmtv5baxv0000pdjjbobt1ojr'
 
-app.get('/khashn/portfolio', async (c) => {
+app.get('/sqftlab/portfolio', async (c) => {
   const items = await prisma.portfolio.findMany({
     where: { userId: DEMO_USER_ID },
     include: { community: { select: { nameEn: true, slug: true, medianAedSqft: true, grossYieldPct: true } } },
@@ -253,7 +253,7 @@ app.get('/khashn/portfolio', async (c) => {
 
 // ─── Watchlist ───────────────────────────────────────────────────────────────
 
-app.get('/khashn/watchlist', async (c) => {
+app.get('/sqftlab/watchlist', async (c) => {
   const items = await prisma.watchlist.findMany({
     where: { userId: DEMO_USER_ID },
     include: { community: true },
@@ -264,7 +264,7 @@ app.get('/khashn/watchlist', async (c) => {
 
 // ─── Deals ───────────────────────────────────────────────────────────────────
 
-app.get('/khashn/deals', async (c) => {
+app.get('/sqftlab/deals', async (c) => {
   const deals = await prisma.listing.findMany({
     where: { isDeal: true, purpose: 'sale' },
     include: { community: { select: { nameEn: true, slug: true, medianAedSqft: true } } },
@@ -276,7 +276,7 @@ app.get('/khashn/deals', async (c) => {
 
 // ─── Listings search ─────────────────────────────────────────────────────────
 
-app.get('/khashn/listings', async (c) => {
+app.get('/sqftlab/listings', async (c) => {
   const purpose = c.req.query('purpose') || 'sale'
   const emirate = c.req.query('emirate')
   const beds = c.req.query('beds')
@@ -316,7 +316,7 @@ app.get('/khashn/listings', async (c) => {
 
 // ─── Alerts ──────────────────────────────────────────────────────────────────
 
-app.get('/khashn/alerts', async (c) => {
+app.get('/sqftlab/alerts', async (c) => {
   const alerts = await prisma.alert.findMany({
     where: { userId: DEMO_USER_ID },
     include: { community: { select: { nameEn: true, slug: true } } },
@@ -327,7 +327,7 @@ app.get('/khashn/alerts', async (c) => {
 
 // ─── Stats for dashboard ─────────────────────────────────────────────────────
 
-app.get('/khashn/stats', async (c) => {
+app.get('/sqftlab/stats', async (c) => {
   const [communityCount, transactionCount, listingCount, dealCount] = await Promise.all([
     prisma.community.count(),
     prisma.transaction.count(),

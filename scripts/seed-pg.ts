@@ -51,12 +51,12 @@ const agents = ['John Smith', 'Sarah Ahmed', 'Mohammed Al-Rashid', 'Priya Patel'
 const agencies = ['Betterhomes', 'Allsopp & Allsopp', 'Crompton Partners', 'Devmark', 'Property Finder Realty', 'Bayut Direct', 'DXB Interiors', 'REGENT', 'Driven Properties', 'Acorn Real Estate']
 
 async function main() {
-  console.log('Seeding Khashn PostgreSQL database...')
+  console.log('Seeding sqftLab PostgreSQL database...')
 
   const user = await prisma.user.upsert({
-    where: { email: 'demo@khashn.ae' },
+    where: { email: 'demo@sqftlab.com' },
     update: {},
-    create: { email: 'demo@khashn.ae', name: 'Demo Investor', phone: '+971501234567', nationality: 'Indian', tier: 'elite' },
+    create: { email: 'demo@sqftlab.com', name: 'Demo Investor', phone: '+971501234567', nationality: 'Indian', tier: 'elite' },
   })
   console.log(`User: ${user.id}`)
 

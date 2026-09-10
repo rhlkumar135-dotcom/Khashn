@@ -49,14 +49,14 @@ const communities = [
 ]
 
 async function main() {
-  console.log('Seeding Khashn database...')
+  console.log('Seeding sqftLab database...')
 
   // Create demo user
   const user = await prisma.user.upsert({
-    where: { email: 'demo@khashn.ae' },
+    where: { email: 'demo@sqftlab.com' },
     update: {},
     create: {
-      email: 'demo@khashn.ae',
+      email: 'demo@sqftlab.com',
       name: 'Demo Investor',
       phone: '+971501234567',
       nationality: 'Indian',

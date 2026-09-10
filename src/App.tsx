@@ -67,11 +67,11 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
   ]
 
   return (
-    <nav className="bg-[#0A2540] text-white sticky top-0 z-50 shadow-lg">
+    <nav className="bg-[#0A2540]/95 backdrop-blur-md text-white sticky top-0 z-50 shadow-lg border-b border-white/5">
       <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
         <button onClick={() => setPage('landing')} className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-[#C8A96E] rounded flex items-center justify-center font-bold text-[#0A2540] text-sm" style={{ fontFamily: 'Georgia, serif' }}>K</div>
-          <span className="text-lg font-semibold tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>Khashn</span>
+          <div className="w-8 h-8 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-sm" style={{ fontFamily: 'Georgia, serif' }}>S</div>
+          <span className="text-lg font-semibold tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>sqftLab</span>
           <span className="text-[10px] text-[#C8A96E] border border-[#C8A96E]/30 rounded px-1.5 py-0.5 ml-1 hidden sm:inline">BETA</span>
         </button>
 
@@ -118,21 +118,22 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
 
 function Landing({ setPage }: { setPage: (p: Page) => void }) {
   const [stats, setStats] = useState<{ communityCount: number; transactionCount: number; listingCount: number } | null>(null)
-  useEffect(() => { fetch('/api/khashn/stats').then(r => r.json()).then(setStats).catch(() => {}) }, [])
+  useEffect(() => { fetch('/api/sqftlab/stats').then(r => r.json()).then(setStats).catch(() => {}) }, [])
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
       <section className="bg-[#0A2540] text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-[#C8A96E] blur-[100px]" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-[#0E7C6E] blur-[120px]" />
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-[#C8A96E] blur-[120px] opacity-10 animate-float" />
+          <div className="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-[#0E7C6E] blur-[150px] opacity-10" style={{ animation: 'float 4s ease-in-out infinite reverse' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#C8A96E] blur-[200px] opacity-[0.03]" />
         </div>
         <div className="max-w-[1280px] mx-auto px-6 py-20 md:py-32 relative z-10">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-lg" style={{ fontFamily: 'Georgia, serif' }}>K</div>
-              <span className="text-sm text-[#C8A96E]/80 tracking-wider uppercase">khashn.ae</span>
+              <div className="w-10 h-10 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-lg" style={{ fontFamily: 'Georgia, serif' }}>S</div>
+              <span className="text-sm text-[#C8A96E]/80 tracking-wider uppercase">sqftlab.com</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
               Dubai's property data,<br /><span className="text-[#C8A96E]">finally in one place.</span>
@@ -183,7 +184,7 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
             { icon: <Shield className="text-[#0E7C6E]" size={28} />, title: 'Developer Risk', desc: 'Handover delays, RERA compliance, and community sentiment scored for every developer.' },
             { icon: <BarChart3 className="text-[#C8A96E]" size={28} />, title: 'AI Predictions', desc: '6-month forward price forecasts trained on 25+ years of DLD transaction data.' },
           ].map((f, i) => (
-            <div key={i} className="bg-white rounded-xl border border-[#C9C5BB] p-6 hover:shadow-md transition-shadow">
+            <div key={i} className="bg-white rounded-xl border border-[#C9C5BB] p-6 hover:shadow-md transition-all duration-300 hover-lift" style={{ animationDelay: `${i * 100}ms` }}>
               <div className="mb-4">{f.icon}</div>
               <h3 className="font-semibold text-[#0A2540] mb-2">{f.title}</h3>
               <p className="text-sm text-[#6B6860] leading-relaxed">{f.desc}</p>
@@ -218,7 +219,7 @@ function HeatmapDashboard({ setPage, setSelectedCommunity }: { setPage: (p: Page
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/khashn/communities?emirate=${emirate}&search=${search}`)
+    fetch(`/api/sqftlab/communities?emirate=${emirate}&search=${search}`)
       .then(r => r.json())
       .then(d => { setCommunities(d.communities || d.items || []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -386,11 +387,11 @@ function CommunityDetail({ slug, setPage }: { slug: string; setPage: (p: Page) =
   useEffect(() => {
     setLoading(true)
     Promise.all([
-      fetch(`/api/khashn/communities/${slug}`).then(r => r.json()),
-      fetch(`/api/khashn/communities/${slug}/trend?period=12m`).then(r => r.json()),
-      fetch(`/api/khashn/communities/${slug}/transactions?limit=20`).then(r => r.json()),
-      fetch(`/api/khashn/communities/${slug}/listings?purpose=sale`).then(r => r.json()),
-      fetch('/api/khashn/rates/exchange').then(r => r.json()),
+      fetch(`/api/sqftlab/communities/${slug}`).then(r => r.json()),
+      fetch(`/api/sqftlab/communities/${slug}/trend?period=12m`).then(r => r.json()),
+      fetch(`/api/sqftlab/communities/${slug}/transactions?limit=20`).then(r => r.json()),
+      fetch(`/api/sqftlab/communities/${slug}/listings?purpose=sale`).then(r => r.json()),
+      fetch('/api/sqftlab/rates/exchange').then(r => r.json()),
     ]).then(([cData, tData, txData, lData, exData]) => {
       const c = cData.community || cData
       setCommunity(c)
@@ -611,7 +612,7 @@ function ListingsFeed({ setPage, setSelectedCommunity }: { setPage: (p: Page) =>
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/khashn/listings?purpose=${purpose}${dealsOnly ? '&deals=true' : ''}`)
+    fetch(`/api/sqftlab/listings?purpose=${purpose}${dealsOnly ? '&deals=true' : ''}`)
       .then(r => r.json())
       .then(d => { setListings(d.listings || []); setLoading(false) })
       .catch(() => setLoading(false))
@@ -699,7 +700,7 @@ function Portfolio() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/khashn/portfolio').then(r => r.json()).then(d => { setData(d); setLoading(false) }).catch(() => setLoading(false))
+    fetch('/api/sqftlab/portfolio').then(r => r.json()).then(d => { setData(d); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="max-w-[1280px] mx-auto px-6 py-20 text-center text-[#6B6860]">Loading portfolio...</div>
@@ -778,7 +779,7 @@ function Watchlist({ setPage, setSelectedCommunity }: { setPage: (p: Page) => vo
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/khashn/watchlist').then(r => r.json()).then(d => { setItems(d.items || []); setLoading(false) }).catch(() => setLoading(false))
+    fetch('/api/sqftlab/watchlist').then(r => r.json()).then(d => { setItems(d.items || []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   if (loading) return <div className="max-w-[1280px] mx-auto px-6 py-20 text-center text-[#6B6860]">Loading watchlist...</div>
@@ -837,7 +838,7 @@ function Deals({ setPage, setSelectedCommunity }: { setPage: (p: Page) => void; 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/khashn/deals').then(r => r.json()).then(d => { setDeals(d.deals || []); setLoading(false) }).catch(() => setLoading(false))
+    fetch('/api/sqftlab/deals').then(r => r.json()).then(d => { setDeals(d.deals || []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   return (
@@ -891,7 +892,7 @@ function AlertsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/khashn/alerts').then(r => r.json()).then(d => { setAlerts(d.alerts || d.items || []); setLoading(false) }).catch(() => setLoading(false))
+    fetch('/api/sqftlab/alerts').then(r => r.json()).then(d => { setAlerts(d.alerts || d.items || []); setLoading(false) }).catch(() => setLoading(false))
   }, [])
 
   const typeLabels: Record<string, { label: string; color: string }> = {
@@ -953,7 +954,7 @@ function YieldCalculator() {
   const [result, setResult] = useState<Record<string, number> | null>(null)
 
   const calculate = useCallback(() => {
-    fetch('/api/khashn/yield/calculate', {
+    fetch('/api/sqftlab/yield/calculate', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
     }).then(r => r.json()).then(setResult).catch(() => {})
   }, [form])
@@ -1052,7 +1053,7 @@ function MortgageSimulator() {
   const [result, setResult] = useState<Record<string, unknown> | null>(null)
 
   const simulate = useCallback(() => {
-    fetch('/api/khashn/mortgage/simulate', {
+    fetch('/api/sqftlab/mortgage/simulate', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
     }).then(r => r.json()).then(setResult).catch(() => {})
   }, [form])
@@ -1255,7 +1256,7 @@ export default function App() {
       {page === 'yield' && <YieldCalculator />}
       {page === 'mortgage' && <MortgageSimulator />}
       <footer className="bg-[#0A2540] text-white/50 text-center py-6 text-xs">
-        © 2026 Khashn · UAE Property Intelligence Platform · Data from DLD, ADREC, Bayut, PropertyFinder
+        © 2026 sqftLab · UAE Property Intelligence Platform · Data from DLD, ADREC, Bayut, PropertyFinder
       </footer>
     </div>
   )

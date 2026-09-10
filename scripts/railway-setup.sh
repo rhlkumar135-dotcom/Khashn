@@ -4,7 +4,7 @@
 
 set -e
 
-echo "=== Khashn Railway Setup ==="
+echo "=== sqftLab Railway Setup ==="
 
 # If DATABASE_URL is set (Railway), switch schema to PostgreSQL
 if [ -n "$DATABASE_URL" ]; then
