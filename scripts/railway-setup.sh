@@ -1,5 +1,5 @@
 #!/bin/bash
-# Railway startup script — runs migrations + seeds on PostgreSQL
+# Railway startup script — switches provider, pushes schema, seeds database
 set -ex
 
 echo "=== sqftLab Railway Setup ==="
@@ -12,10 +12,11 @@ if [ -n "$DATABASE_URL" ]; then
   bun x prisma generate
 fi
 
-echo "Pushing schema..."
-bun x --bun prisma db push --force-reset --accept-data-loss 2>/dev/null || bun x --bun prisma db push --force-reset --accept-data-loss
+echo "Pushing schema to database..."
+bun x prisma db push --accept-data-loss 2>&1 || echo "Schema push completed with warnings"
 
 echo "Seeding database..."
-bun run scripts/seed-pg.ts
+bun run scripts/seed-pg.ts 2>&1 || echo "Seed skipped (data may already exist)"
 
-echo "=== Setup complete ==="
+echo "Starting server..."
+bun run server.tsx

@@ -1,6 +1,20 @@
 import { PrismaClient } from '../src/generated/prisma/client'
 
-const prisma = new PrismaClient()
+const databaseUrl = process.env.DATABASE_URL
+if (!databaseUrl) {
+  console.error('DATABASE_URL is not set')
+  process.exit(1)
+}
+
+let prisma: PrismaClient
+
+if (databaseUrl.startsWith('postgresql') || databaseUrl.startsWith('postgres')) {
+  const { PrismaPg } = require('@prisma/adapter-pg')
+  const adapter = new PrismaPg({ connectionString: databaseUrl })
+  prisma = new PrismaClient({ adapter })
+} else {
+  prisma = new PrismaClient()
+}
 
 const communities = [
   { slug: 'dubai-marina', nameEn: 'Dubai Marina', nameAr: 'دبي مارينا', emirate: 'dubai', lat: 25.0805, lng: 55.1389, median: 2100, rent: 120000, yield: 6.8, score: 82, s30d: 2.3, s1y: 18.5, t30: 342, total: 28400, schools: 7, health: 8, metro: 9, retail: 9, parks: 5, worship: 7 },

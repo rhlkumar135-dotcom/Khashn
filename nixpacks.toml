@@ -2,10 +2,10 @@
 nixPkgs = ["bun"]
 
 [phases.install]
-cmds = ["chmod +x scripts/railway-build.sh"]
+cmds = ["bun install --frozen-lockfile"]
 
 [phases.build]
-cmds = ["bash scripts/railway-build.sh"]
+cmds = ["bun run generate", "bun run build"]
 
 [start]
-cmd = "bun run railway:setup && bun run start"
+cmd = "bash scripts/railway-setup.sh"

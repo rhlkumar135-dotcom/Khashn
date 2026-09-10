@@ -11,7 +11,7 @@
     "dev:server": "bun --watch run server.tsx",
     "dev:client": "vite",
     "build": "vite build",
-    "start": "bash scripts/railway-setup.sh && bun run server.tsx",
+    "start": "bun run server.tsx",
     "generate": "bun ./node_modules/@shogo-ai/sdk/bin/cli.mjs generate",
     "db:generate": "bun x --bun prisma generate",
     "db:migrate:deploy": "bun x --bun prisma migrate deploy",
