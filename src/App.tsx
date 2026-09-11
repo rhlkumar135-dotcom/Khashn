@@ -70,8 +70,8 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
     <nav className="bg-[#0A2540]/95 backdrop-blur-md text-white sticky top-0 z-50 shadow-lg border-b border-white/5">
       <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
         <button onClick={() => setPage('landing')} className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-sm" style={{ fontFamily: 'Georgia, serif' }}>S</div>
-          <span className="text-lg font-semibold tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>sqftLab</span>
+          <div className="w-8 h-8 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-sm">S</div>
+          <span className="text-lg font-semibold tracking-tight">sqftLab</span>
           <span className="text-[10px] text-[#C8A96E] border border-[#C8A96E]/30 rounded px-1.5 py-0.5 ml-1 hidden sm:inline">BETA</span>
         </button>
 
@@ -123,19 +123,14 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="bg-[#0A2540] text-white relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-[#C8A96E] blur-[120px] opacity-10 animate-float" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-[#0E7C6E] blur-[150px] opacity-10" style={{ animation: 'float 4s ease-in-out infinite reverse' }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#C8A96E] blur-[200px] opacity-[0.03]" />
-        </div>
-        <div className="max-w-[1280px] mx-auto px-6 py-20 md:py-32 relative z-10">
+      <section className="bg-[#0A2540] text-white">
+        <div className="max-w-[1280px] mx-auto px-6 py-20 md:py-32">
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-lg" style={{ fontFamily: 'Georgia, serif' }}>S</div>
+              <div className="w-10 h-10 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-lg">S</div>
               <span className="text-sm text-[#C8A96E]/80 tracking-wider uppercase">sqftlab.com</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
               Dubai's property data,<br /><span className="text-[#C8A96E]">finally in one place.</span>
             </h1>
             <p className="text-lg text-white/70 mb-8 max-w-xl leading-relaxed">
@@ -174,7 +169,7 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
 
       {/* Features */}
       <section className="max-w-[1280px] mx-auto px-6 py-20">
-        <h2 className="text-3xl font-bold text-[#0A2540] mb-12" style={{ fontFamily: 'Georgia, serif' }}>Every data source. Zero cost.</h2>
+        <h2 className="text-3xl font-bold text-[#0A2540] mb-12">Every data source. Zero cost.</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {[
             { icon: <MapPin className="text-[#C8A96E]" size={28} />, title: 'Price Heatmap', desc: 'Colour-graded AED/sqft across every UAE community. Click any marker for instant analytics.' },
@@ -184,7 +179,7 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
             { icon: <Shield className="text-[#0E7C6E]" size={28} />, title: 'Developer Risk', desc: 'Handover delays, RERA compliance, and community sentiment scored for every developer.' },
             { icon: <BarChart3 className="text-[#C8A96E]" size={28} />, title: 'AI Predictions', desc: '6-month forward price forecasts trained on 25+ years of DLD transaction data.' },
           ].map((f, i) => (
-            <div key={i} className="bg-white rounded-xl border border-[#C9C5BB] p-6 hover:shadow-md transition-all duration-300 hover-lift" style={{ animationDelay: `${i * 100}ms` }}>
+            <div key={i} className="bg-white rounded-xl border border-[#C9C5BB] p-6 hover:shadow-md transition-all duration-300">
               <div className="mb-4">{f.icon}</div>
               <h3 className="font-semibold text-[#0A2540] mb-2">{f.title}</h3>
               <p className="text-sm text-[#6B6860] leading-relaxed">{f.desc}</p>
@@ -196,7 +191,7 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
       {/* Pricing CTA */}
       <section className="bg-[#0A2540] text-white py-20">
         <div className="max-w-[1280px] mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: 'Georgia, serif' }}>Start free. Upgrade when ready.</h2>
+          <h2 className="text-3xl font-bold mb-4">Start free. Upgrade when ready.</h2>
           <p className="text-white/60 mb-8 max-w-lg mx-auto">5 heatmap searches per day, 3 months of transaction history, and INR equivalents — completely free.</p>
           <button onClick={() => setPage('pricing')}
             className="bg-[#C8A96E] text-[#0A2540] px-8 py-3 rounded-lg font-semibold hover:bg-[#C8A96E]/90 transition-colors">
@@ -426,7 +421,7 @@ function CommunityDetail({ slug, setPage }: { slug: string; setPage: (p: Page) =
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-2xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>{community.nameEn}</h1>
+              <h1 className="text-2xl font-bold">{community.nameEn}</h1>
               <span className="text-xs bg-[#C8A96E]/20 text-[#C8A96E] px-2 py-0.5 rounded capitalize">{community.emirate.replace('_', ' ')}</span>
             </div>
             {community.nameAr && <div className="text-sm text-white/50">{community.nameAr}</div>}
@@ -621,7 +616,7 @@ function ListingsFeed({ setPage, setSelectedCommunity }: { setPage: (p: Page) =>
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-6">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-[#0A2540]" style={{ fontFamily: 'Georgia, serif' }}>Live Listings</h2>
+        <h2 className="text-2xl font-bold text-[#0A2540]">Live Listings</h2>
         <div className="flex items-center gap-3">
           <div className="flex gap-1 bg-white border border-[#C9C5BB] rounded-lg p-0.5">
             {['sale', 'rent'].map(p => (
@@ -712,7 +707,7 @@ function Portfolio() {
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-[#0A2540] mb-6" style={{ fontFamily: 'Georgia, serif' }}>Portfolio</h2>
+      <h2 className="text-2xl font-bold text-[#0A2540] mb-6">Portfolio</h2>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -786,7 +781,7 @@ function Watchlist({ setPage, setSelectedCommunity }: { setPage: (p: Page) => vo
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-[#0A2540] mb-6" style={{ fontFamily: 'Georgia, serif' }}>Watchlist</h2>
+      <h2 className="text-2xl font-bold text-[#0A2540] mb-6">Watchlist</h2>
       {items.length === 0 ? (
         <div className="text-center py-20 text-[#6B6860]">
           <Bookmark size={40} className="mx-auto mb-3 text-[#C9C5BB]" />
@@ -845,7 +840,7 @@ function Deals({ setPage, setSelectedCommunity }: { setPage: (p: Page) => void; 
     <div className="max-w-[1280px] mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
         <Zap className="text-[#B91C1C]" size={24} />
-        <h2 className="text-2xl font-bold text-[#0A2540]" style={{ fontFamily: 'Georgia, serif' }}>Deal Alert Feed</h2>
+        <h2 className="text-2xl font-bold text-[#0A2540]">Deal Alert Feed</h2>
         <span className="text-xs bg-[#B91C1C]/10 text-[#B91C1C] px-2 py-1 rounded font-medium">{deals.length} deals</span>
       </div>
       <p className="text-sm text-[#6B6860] mb-6">Listings priced below the community median — potential investment opportunities.</p>
@@ -904,7 +899,7 @@ function AlertsPage() {
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-[#0A2540] mb-6" style={{ fontFamily: 'Georgia, serif' }}>Deal Alerts</h2>
+      <h2 className="text-2xl font-bold text-[#0A2540] mb-6">Deal Alerts</h2>
       {loading ? (
         <div className="text-center py-20 text-[#6B6860]">Loading alerts...</div>
       ) : alerts.length === 0 ? (
@@ -963,7 +958,7 @@ function YieldCalculator() {
 
   return (
     <div className="max-w-[800px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-[#0A2540] mb-2" style={{ fontFamily: 'Georgia, serif' }}>Yield Calculator</h2>
+      <h2 className="text-2xl font-bold text-[#0A2540] mb-2">Yield Calculator</h2>
       <p className="text-sm text-[#6B6860] mb-6">Calculate gross & net yields, cash flow, and break-even for any property.</p>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -1066,7 +1061,7 @@ function MortgageSimulator() {
 
   return (
     <div className="max-w-[1000px] mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold text-[#0A2540] mb-2" style={{ fontFamily: 'Georgia, serif' }}>Mortgage Simulator</h2>
+      <h2 className="text-2xl font-bold text-[#0A2540] mb-2">Mortgage Simulator</h2>
       <p className="text-sm text-[#6B6860] mb-6">Estimate EMI, total cost, and compare indicative bank rates.</p>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -1195,7 +1190,7 @@ function PricingPage() {
   return (
     <div className="max-w-[1000px] mx-auto px-4 py-12">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-[#0A2540] mb-3" style={{ fontFamily: 'Georgia, serif' }}>Simple, transparent pricing</h2>
+        <h2 className="text-3xl font-bold text-[#0A2540] mb-3">Simple, transparent pricing</h2>
         <p className="text-[#6B6860] mb-6">Start free. Upgrade when you need more data and power tools.</p>
         <div className="inline-flex items-center gap-3 bg-white border border-[#C9C5BB] rounded-lg p-1">
           <button onClick={() => setAnnual(false)} className={cn('px-4 py-1.5 rounded text-sm font-medium', !annual ? 'bg-[#0A2540] text-white' : 'text-[#6B6860]')}>Monthly</button>
