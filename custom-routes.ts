@@ -210,12 +210,246 @@ app.post('/sqftlab/mortgage/simulate', async (c) => {
 
 // ─── Exchange Rates ──────────────────────────────────────────────────────────
 
-app.get('/sqftlab/rates/exchange', (c) => {
+app.get('/sqftlab/rates/exchange', async (c) => {
+  // Fetch live rates from frankfurter API
+  try {
+    const res = await fetch('https://api.frankfurter.app/latest?from=AED&to=USD,GBP,EUR,INR,PKR', {
+      signal: AbortSignal.timeout(5000),
+    })
+    if (res.ok) {
+      const data = await res.json()
+      return c.json({
+        AED_INR: data.rates?.INR ?? 22.68,
+        AED_USD: data.rates?.USD ?? 0.2723,
+        AED_GBP: data.rates?.GBP ?? 0.2145,
+        AED_EUR: data.rates?.EUR ?? 0.25,
+        AED_PKR: data.rates?.PKR ?? 75.5,
+        updatedAt: data.date ?? new Date().toISOString(),
+      })
+    }
+  } catch {}
   return c.json({
-    AED_INR: 22.68,
-    AED_USD: 0.2723,
-    AED_GBP: 0.2145,
-    updatedAt: new Date().toISOString(),
+    AED_INR: 22.68, AED_USD: 0.2723, AED_GBP: 0.2145,
+    AED_EUR: 0.25, AED_PKR: 75.5, updatedAt: new Date().toISOString(),
+  })
+})
+
+// ─── Scraper: PropertyFinder ────────────────────────────────────────────────
+
+const PF_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+
+const DUBAI_AREAS = [
+  { name: 'Dubai Marina', lid: '31', slug: 'dubai-marina' },
+  { name: 'Downtown Dubai', lid: '56', slug: 'downtown-dubai' },
+  { name: 'Palm Jumeirah', lid: '63', slug: 'palm-jumeirah' },
+  { name: 'JVC', lid: '544', slug: 'jumeirah-village-circle' },
+  { name: 'Business Bay', lid: '53', slug: 'business-bay' },
+  { name: 'Dubai Hills Estate', lid: '1436', slug: 'dubai-hills-estate' },
+  { name: 'JLT', lid: '59', slug: 'jumeirah-lake-towers' },
+  { name: 'DIFC', lid: '55', slug: 'difc' },
+  { name: 'Dubai Creek Harbour', lid: '3476', slug: 'dubai-creek-harbour' },
+  { name: 'MBR City', lid: '2424', slug: 'mbr-city' },
+  { name: 'Al Barsha', lid: '40', slug: 'al-barsha' },
+  { name: 'Deira', lid: '49', slug: 'deira' },
+  { name: 'Bur Dubai', lid: '47', slug: 'bur-dubai' },
+  { name: 'Dubai Silicon Oasis', lid: '109', slug: 'dubai-silicon-oasis' },
+  { name: 'Dubai Sports City', lid: '103', slug: 'dubai-sports-city' },
+  { name: 'Motor City', lid: '102', slug: 'motor-city' },
+  { name: 'Discovery Gardens', lid: '58', slug: 'discovery-gardens' },
+  { name: 'Town Square', lid: '2100', slug: 'town-square' },
+  { name: 'Al Nahda', lid: '44', slug: 'al-nahda' },
+  { name: 'Dubailand', lid: '105', slug: 'dubailand' },
+]
+
+const AD_AREAS = [
+  { name: 'Al Reem Island', lid: '6665', slug: 'al-reem-island' },
+  { name: 'Saadiyat Island', lid: '6666', slug: 'saadiyat-island' },
+  { name: 'Yas Island', lid: '6667', slug: 'yas-island' },
+  { name: 'Al Raha Beach', lid: '6668', slug: 'al-raha-beach' },
+  { name: 'Corniche', lid: '6663', slug: 'corniche' },
+  { name: 'Khalifa City', lid: '6670', slug: 'khalifa-city' },
+  { name: 'MBZ City', lid: '6671', slug: 'mbz-city' },
+  { name: 'Al Maryah Island', lid: '6669', slug: 'al-maryah-island' },
+]
+
+const sleepMs = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+async function pfFetchPage(catId: number, locationId: string, page: number): Promise<any[]> {
+  const url = `https://www.propertyfinder.ae/en/search?c=${catId}&l=${locationId}&ob=mr&page=${page}`
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': PF_UA, 'Accept-Language': 'en-US,en;q=0.9' },
+      signal: AbortSignal.timeout(15000),
+    })
+    if (!res.ok) return []
+    const html = await res.text()
+    const m = html.match(/<script id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/)
+    if (!m) return []
+    const j = JSON.parse(m[1])
+    const items = j?.props?.pageProps?.searchResult?.listings ?? []
+    return items.filter((l: any) => l.listing_type === 'property' && l.property).map((l: any) => l.property)
+  } catch { return [] }
+}
+
+function pfParse(property: any, source: string, purpose: string) {
+  const price = property.price?.value ?? 0
+  const area = property.size ?? 0
+  const loc = property.location ?? {}
+  return {
+    externalId: `${source}_${property.id}`,
+    source,
+    purpose,
+    propertyType: property.property_type ?? 'Apartment',
+    beds: property.bedrooms_value ?? property.bedrooms ?? 0,
+    baths: property.bathrooms_value ?? property.bathrooms ?? 0,
+    areaSqft: area,
+    priceAed: price,
+    pricePerSqft: area > 0 ? Math.round(price / area) : 0,
+    furnished: property.furnished === 'furnished' ? 'furnished' : 'unfurnished',
+    completion: property.completion_status === 'off_plan' ? 'off_plan' : 'ready',
+    agentName: property.agent?.name ?? null,
+    agencyName: property.broker?.name ?? null,
+    title: property.title ?? `${property.property_type} in ${loc.name ?? ''}`,
+    imageUrl: property.images?.[0]?.medium ?? property.images?.[0]?.small ?? null,
+    latitude: loc.coordinates?.lat ?? null,
+    longitude: loc.coordinates?.lon ?? null,
+    listedAt: new Date(property.listed_date ?? Date.now()),
+    districtName: loc.name ?? 'Unknown',
+    locationSlug: loc.slug ?? (loc.name ?? 'unknown').toLowerCase().replace(/\s+/g, '-'),
+  }
+}
+
+async function ensureCommunity(name: string, slug: string, emirate: string) {
+  let c = await prisma.community.findFirst({ where: { slug } })
+  if (!c) c = await prisma.community.findFirst({ where: { nameEn: { contains: name, mode: 'insensitive' } } })
+  if (!c) {
+    c = await prisma.community.create({
+      data: {
+        slug, nameEn: name, emirate, latitude: 25.2, longitude: 55.27,
+        medianAedSqft: 0, medianAnnualRentAed: 0, grossYieldPct: 0,
+        neighbourhoodScore: 50, priceChange30d: 0, priceChange1y: 0,
+        transactionCount30d: 0, totalTransactions: 0,
+      },
+    })
+  }
+  return c
+}
+
+app.get('/sqftlab/scrape', async (c) => {
+  const secret = c.req.query('secret')
+  if (secret !== 'sqrtlab-cron-2026') return c.json({ error: 'unauthorized' }, 401)
+
+  const startedAt = Date.now()
+  let totalSaved = 0
+  const logs: string[] = []
+
+  // Scrape Dubai + Abu Dhabi
+  for (const areas of [DUBAI_AREAS, AD_AREAS]) {
+    const emirate = areas === DUBAI_AREAS ? 'dubai' : 'abu_dhabi'
+    for (const area of areas) {
+      for (const catId of [1, 2]) {
+        const purpose = catId === 1 ? 'sale' : 'rent'
+        for (let page = 1; page <= 3; page++) {
+          const props = await pfFetchPage(catId, area.lid, page)
+          if (props.length === 0) break
+          for (const p of props) {
+            try {
+              const parsed = pfParse(p, 'propertyfinder', purpose)
+              if (parsed.priceAed <= 0) continue
+              const community = await ensureCommunity(parsed.districtName, parsed.locationSlug, emirate)
+              await prisma.listing.upsert({
+                where: { externalId: parsed.externalId },
+                create: {
+                  externalId: parsed.externalId, source: parsed.source,
+                  communityId: community.id, purpose: parsed.purpose,
+                  propertyType: parsed.propertyType, beds: parsed.beds,
+                  baths: parsed.baths, areaSqft: parsed.areaSqft,
+                  priceAed: parsed.priceAed, pricePerSqft: parsed.pricePerSqft,
+                  furnished: parsed.furnished, completion: parsed.completion,
+                  agentName: parsed.agentName, agencyName: parsed.agencyName,
+                  title: parsed.title, imageUrl: parsed.imageUrl,
+                  latitude: parsed.latitude, longitude: parsed.longitude,
+                  listedAt: parsed.listedAt, isDeal: false,
+                },
+                update: {
+                  priceAed: parsed.priceAed, pricePerSqft: parsed.pricePerSqft,
+                  title: parsed.title, imageUrl: parsed.imageUrl,
+                  agentName: parsed.agentName, agencyName: parsed.agencyName,
+                  scrapedAt: new Date(),
+                },
+              })
+              totalSaved++
+            } catch {}
+          }
+          await sleepMs(1500)
+        }
+      }
+    }
+  }
+
+  // Cleanup old listings (>30 days)
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  const deleted = await prisma.listing.deleteMany({ where: { scrapedAt: { lt: thirtyDaysAgo } } })
+
+  // Update community stats
+  const communities = await prisma.community.findMany()
+  for (const comm of communities) {
+    const [cnt, avgPsf, avgRent, txCnt] = await Promise.all([
+      prisma.listing.count({ where: { communityId: comm.id } }),
+      prisma.listing.aggregate({ where: { communityId: comm.id, purpose: 'sale', pricePerSqft: { gt: 0 } }, _avg: { pricePerSqft: true } }),
+      prisma.listing.aggregate({ where: { communityId: comm.id, purpose: 'rent', priceAed: { gt: 0 } }, _avg: { priceAed: true } }),
+      prisma.transaction.count({ where: { communityId: comm.id } }),
+    ])
+    const mp = Math.round(avgPsf._avg.pricePerSqft ?? 0)
+    const mr = Math.round(avgRent._avg.priceAed ?? 0)
+    const yld = mp > 0 && mr > 0 ? Math.round((mr / (mp * 1000)) * 10000) / 100 : 0
+    await prisma.community.update({
+      where: { id: comm.id },
+      data: {
+        medianAedSqft: mp || comm.medianAedSqft,
+        medianAnnualRentAed: mr || comm.medianAnnualRentAed,
+        grossYieldPct: yld || comm.grossYieldPct,
+        totalTransactions: txCnt,
+      },
+    })
+  }
+
+  const elapsed = Math.round((Date.now() - startedAt) / 1000)
+  const finalCount = await prisma.listing.count()
+
+  return c.json({
+    ok: true,
+    saved: totalSaved,
+    deleted: deleted.count,
+    totalListings: finalCount,
+    communities: communities.length,
+    elapsed: `${elapsed}s`,
+  })
+})
+
+// ─── Scraper status ─────────────────────────────────────────────────────────
+
+app.get('/sqftlab/scrape/status', async (c) => {
+  const [listingCount, communityCount, transactionCount, oldestListing, newestListing] = await Promise.all([
+    prisma.listing.count(),
+    prisma.community.count(),
+    prisma.transaction.count(),
+    prisma.listing.findFirst({ orderBy: { scrapedAt: 'asc' }, select: { scrapedAt: true } }),
+    prisma.listing.findFirst({ orderBy: { scrapedAt: 'desc' }, select: { scrapedAt: true } }),
+  ])
+
+  const byPurpose = await prisma.listing.groupBy({ by: ['purpose'], _count: true })
+  const bySource = await prisma.listing.groupBy({ by: ['source'], _count: true })
+
+  return c.json({
+    listings: listingCount,
+    communities: communityCount,
+    transactions: transactionCount,
+    oldestListing: oldestListing?.scrapedAt,
+    newestListing: newestListing?.scrapedAt,
+    byPurpose: Object.fromEntries(byPurpose.map(r => [r.purpose, r._count])),
+    bySource: Object.fromEntries(bySource.map(r => [r.source, r._count])),
   })
 })
 
