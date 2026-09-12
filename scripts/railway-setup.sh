@@ -2,7 +2,7 @@
 # Railway startup: swap schema for PostgreSQL, generate prisma client, push schema, seed, start server
 set -e
 
-echo "=== sqrtLab Railway Startup ==="
+echo "=== sqftLab Railway Startup ==="
 
 # Swap schema to PostgreSQL if DATABASE_URL is set
 if [ -n "$DATABASE_URL" ]; then

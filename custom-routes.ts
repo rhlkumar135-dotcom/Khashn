@@ -593,7 +593,7 @@ app.get('/sqftlab/stats', async (c) => {
 
 app.get('/sqftlab/cron/scrape', async (c) => {
   const secret = c.req.query('secret')
-  if (secret !== process.env.CRON_SECRET && secret !== 'sqrtlab-cron-2026') {
+  if (secret !== process.env.CRON_SECRET && secret !== 'sqftlab-cron-2026') {
     return c.json({ error: 'unauthorized' }, 401)
   }
 
@@ -606,7 +606,7 @@ app.get('/sqftlab/cron/scrape', async (c) => {
     })
     logId = log.id
 
-    const scrapeRes = await fetch(`http://localhost:${process.env.PORT || 3001}/api/sqftlab/scrape?secret=sqrtlab-cron-2026`)
+    const scrapeRes = await fetch(`http://localhost:${process.env.PORT || 3001}/api/sqftlab/scrape?secret=sqftlab-cron-2026`)
     const result = await scrapeRes.json()
 
     const completedAt = new Date()
@@ -629,7 +629,7 @@ app.get('/sqftlab/cron/scrape', async (c) => {
     const telegramToken = process.env.TELEGRAM_BOT_TOKEN
     const telegramChatId = process.env.TELEGRAM_CHAT_ID
     if (telegramToken && telegramChatId) {
-      const msg = `🏗️ *sqrtLab Scrape Complete*\n📅 ${completedAt.toISOString().replace('T', ' ').substring(0, 16)} UTC\n✅ Saved: ${result.saved ?? 0}\n🗑️ Cleaned: ${result.deleted ?? 0}\n📊 Total: ${result.totalListings ?? 0} across ${result.communities ?? 0} communities\n⏱️ ${elapsed}s`
+      const msg = `🏗️ *sqftLab Scrape Complete*\n📅 ${completedAt.toISOString().replace('T', ' ').substring(0, 16)} UTC\n✅ Saved: ${result.saved ?? 0}\n🗑️ Cleaned: ${result.deleted ?? 0}\n📊 Total: ${result.totalListings ?? 0} across ${result.communities ?? 0} communities\n⏱️ ${elapsed}s`
 
       try {
         await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
