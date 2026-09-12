@@ -1,8 +1,15 @@
 #!/bin/bash
-# Railway startup: generate prisma client, push schema, seed, start server
+# Railway startup: swap schema for PostgreSQL, generate prisma client, push schema, seed, start server
 set -e
 
 echo "=== sqrtLab Railway Startup ==="
+
+# Swap schema to PostgreSQL if DATABASE_URL is set
+if [ -n "$DATABASE_URL" ]; then
+  echo "PostgreSQL detected — switching schema provider..."
+  sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
+  echo "Schema provider: $(grep 'provider' prisma/schema.prisma | head -1)"
+fi
 
 echo "Step 1: Generating Prisma client..."
 bun x prisma generate

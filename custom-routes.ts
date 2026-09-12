@@ -3,6 +3,17 @@ import { prisma } from './src/lib/db'
 
 const app = new Hono()
 
+// ─── Health Check ────────────────────────────────────────────────────────────
+
+app.get('/health', async (c) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    return c.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() })
+  } catch (err: any) {
+    return c.json({ status: 'error', db: 'disconnected', error: err.message }, 500)
+  }
+})
+
 // ─── Communities ──────────────────────────────────────────────────────────────
 
 app.get('/sqftlab/communities', async (c) => {

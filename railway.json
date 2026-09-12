@@ -5,8 +5,9 @@
     "buildCommand": "bash scripts/railway-build.sh"
   },
   "deploy": {
-    "startCommand": "bash scripts/railway-setup.sh && bun run start",
-    "healthcheckPath": "/",
+    "startCommand": "bash scripts/railway-setup.sh",
+    "healthcheckPath": "/api/sqftlab/health",
+    "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 5
   }
