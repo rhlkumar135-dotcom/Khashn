@@ -348,7 +348,7 @@ async function ensureCommunity(name: string, slug: string, emirate: string) {
 
 app.get('/sqftlab/scrape', async (c) => {
   const secret = c.req.query('secret')
-  if (secret !== 'sqrtlab-cron-2026') return c.json({ error: 'unauthorized' }, 401)
+  if (secret !== 'sqftlab-cron-2026') return c.json({ error: 'unauthorized' }, 401)
 
   const startedAt = Date.now()
   let totalSaved = 0
