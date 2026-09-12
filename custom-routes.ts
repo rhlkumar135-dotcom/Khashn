@@ -590,20 +590,17 @@ app.get('/sqftlab/cron/scrape', async (c) => {
   let logId = ''
 
   try {
-    // Create scrape log entry
     const log = await prisma.scrapeLog.create({
-      data: { startedAt, completedAt: startedAt, status: 'running', startedAt },
+      data: { startedAt, completedAt: startedAt, status: 'running' },
     })
     logId = log.id
 
-    // Trigger internal scrape via same logic as /sqftlab/scrape
     const scrapeRes = await fetch(`http://localhost:${process.env.PORT || 3001}/api/sqftlab/scrape?secret=sqrtlab-cron-2026`)
     const result = await scrapeRes.json()
 
     const completedAt = new Date()
     const elapsed = Math.round((completedAt.getTime() - startedAt.getTime()) / 1000)
 
-    // Update log
     await prisma.scrapeLog.update({
       where: { id: logId },
       data: {
@@ -618,17 +615,10 @@ app.get('/sqftlab/cron/scrape', async (c) => {
       },
     })
 
-    // Send Telegram notification
     const telegramToken = process.env.TELEGRAM_BOT_TOKEN
     const telegramChatId = process.env.TELEGRAM_CHAT_ID
     if (telegramToken && telegramChatId) {
-      const msg = `🏗️ *sqrtLab Scrape Complete*\n` +
-        `📅 ${completedAt.toISOString().replace('T', ' ').substring(0, 16)} UTC\n` +
-        `✅ Saved: ${result.saved ?? 0} listings\n` +
-        `🗑️ Cleaned: ${result.deleted ?? 0} old listings\n` +
-        `📊 Total: ${result.totalListings ?? 0} listings across ${result.communities ?? 0} communities\n` +
-        `⏱️ Duration: ${elapsed}s` +
-        (result.ok ? '' : `\n❌ Error: ${result.error || 'scrape failed'}`)
+      const msg = `🏗️ *sqrtLab Scrape Complete*\n📅 ${completedAt.toISOString().replace('T', ' ').substring(0, 16)} UTC\n✅ Saved: ${result.saved ?? 0}\n🗑️ Cleaned: ${result.deleted ?? 0}\n📊 Total: ${result.totalListings ?? 0} across ${result.communities ?? 0} communities\n⏱️ ${elapsed}s`
 
       try {
         await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
@@ -642,7 +632,6 @@ app.get('/sqftlab/cron/scrape', async (c) => {
 
     return c.json({ ok: true, logId, result })
   } catch (err: any) {
-    // Update log with error
     if (logId) {
       try {
         await prisma.scrapeLog.update({
@@ -655,8 +644,6 @@ app.get('/sqftlab/cron/scrape', async (c) => {
   }
 })
 
-// ─── Scrape logs ─────────────────────────────────────────────────────────
-
 app.get('/sqftlab/cron/logs', async (c) => {
   const limit = parseInt(c.req.query('limit') || '20')
   const logs = await prisma.scrapeLog.findMany({
@@ -666,4 +653,4 @@ app.get('/sqftlab/cron/logs', async (c) => {
   return c.json({ logs })
 })
 
-// ─── Stats for dashboard ─────────────────────────────────────────────────
+export default app
