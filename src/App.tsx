@@ -71,7 +71,7 @@ function Nav({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
       <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between">
         <button onClick={() => setPage('landing')} className="flex items-center gap-2 group">
           <div className="w-8 h-8 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-sm">S</div>
-          <span className="text-lg font-semibold tracking-tight">sqrtLab</span>
+          <span className="text-lg font-semibold tracking-tight">sqftLab</span>
           <span className="text-[10px] text-[#C8A96E] border border-[#C8A96E]/30 rounded px-1.5 py-0.5 ml-1 hidden sm:inline">BETA</span>
         </button>
 
@@ -128,17 +128,15 @@ function Landing({ setPage }: { setPage: (p: Page) => void }) {
           <div className="max-w-3xl">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-10 h-10 bg-[#C8A96E] rounded-lg flex items-center justify-center font-bold text-[#0A2540] text-lg">S</div>
-              <span className="text-sm text-[#C8A96E]/80 tracking-wider uppercase">sqrtlab.com</span>
+              <span className="text-sm text-[#C8A96E]/80 tracking-wider uppercase">sqftlab.com</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-8">
-              Dubai Pulse. ADREC. Every live listing.
-              <br />
-              <span className="bg-gradient-to-r from-[#C8A96E] via-[#D4B978] to-[#C8A96E] bg-clip-text text-transparent">
-                One platform that tells you exactly what a property is worth
-              </span>
-              <span className="text-white/60"> — before anyone else does.</span>
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
+              Dubai's property data,<br /><span className="text-[#C8A96E]">finally in one place.</span>
             </h1>
-            <div className="flex flex-wrap gap-3 mt-2">
+            <p className="text-lg text-white/70 mb-8 max-w-xl leading-relaxed">
+              Real-time price heatmaps, AI-powered yield forecasts, deal alerts, and portfolio tracking — across every community in Dubai and Abu Dhabi.
+            </p>
+            <div className="flex flex-wrap gap-3">
               <button onClick={() => setPage('dashboard')}
                 className="bg-[#C8A96E] text-[#0A2540] px-6 py-3 rounded-lg font-semibold hover:bg-[#C8A96E]/90 transition-colors">
                 Explore Heatmap →
@@ -1253,7 +1251,7 @@ export default function App() {
       {page === 'yield' && <YieldCalculator />}
       {page === 'mortgage' && <MortgageSimulator />}
       <footer className="bg-[#0A2540] text-white/50 text-center py-6 text-xs">
-        © 2026 sqrtLab · UAE Property Intelligence Platform · Data from DLD, ADREC, Bayut, PropertyFinder
+        © 2026 sqftLab · UAE Property Intelligence Platform · Data from DLD, ADREC, Bayut, PropertyFinder
       </footer>
     </div>
   )

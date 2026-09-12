@@ -1,8 +1,8 @@
 {
-  "name": "sqrtlab",
+  "name": "sqftlab",
   "version": "1.0.0",
   "private": true,
-  "description": "sqrtLab - UAE Property Intelligence Platform",
+  "description": "sqftLab - UAE Property Intelligence Platform",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {

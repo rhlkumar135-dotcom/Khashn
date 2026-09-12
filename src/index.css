@@ -5,7 +5,7 @@
 
 @plugin "tailwindcss-animate";
 
-/* ─── sqrtLab Design Tokens ────────────────────────────────────────────────
+/* ─── sqftLab Design Tokens ────────────────────────────────────────────────
    Source: Khashn_UAE_PropTech_Documentation_v1.docx §2.2
    Philosophy: "precise, restrained, confident — private banking interface"
    The single bold choice: gold on midnight. Everything else serves that pair.
@@ -32,16 +32,16 @@
   --ring: #C8A96E;
   --radius: 0.5rem;
 
-  /* sqrtLab brand tokens */
-  --sqrtlab-navy: #0A2540;
-  --sqrtlab-gold: #C8A96E;
-  --sqrtlab-teal: #0E7C6E;
-  --sqrtlab-sand: #F5F0E8;
-  --sqrtlab-danger: #B91C1C;
-  --sqrtlab-surface: #FFFFFF;
-  --sqrtlab-surface-2: #F8F6F2;
-  --sqrtlab-ink: #0A0A0A;
-  --sqrtlab-muted: #6B6860;
+  /* sqftLab brand tokens */
+  --sqftlab-navy: #0A2540;
+  --sqftlab-gold: #C8A96E;
+  --sqftlab-teal: #0E7C6E;
+  --sqftlab-sand: #F5F0E8;
+  --sqftlab-danger: #B91C1C;
+  --sqftlab-surface: #FFFFFF;
+  --sqftlab-surface-2: #F8F6F2;
+  --sqftlab-ink: #0A0A0A;
+  --sqftlab-muted: #6B6860;
 }
 
 @theme inline {
