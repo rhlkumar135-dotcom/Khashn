@@ -4,7 +4,7 @@
  * Only keeps listings from the last 30 days.
  * 
  * Run: bun scripts/scraper-pf.ts
- * Or trigger via: GET /api/sqftlab/scrape
+ * Or trigger via: GET /api/sqftlab/scrape (API paths unchanged for compatibility)
  */
 
 import { PrismaClient } from '@prisma/client'
