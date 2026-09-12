@@ -114,6 +114,10 @@ model Listing {
 
   @@index([communityId])
   @@index([isDeal])
+  @@index([purpose])
+  @@index([scrapedAt])
+  @@index([priceAed])
+  @@index([externalId])
   @@map("listings")
 }
 
