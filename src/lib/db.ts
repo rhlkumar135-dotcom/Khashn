@@ -1,14 +1,23 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (C) 2026 Shogo Technologies, Inc.
 import { PrismaClient } from '../generated/prisma/client'
-import { PrismaLibSql } from '@prisma/adapter-libsql'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
 function createPrismaClient() {
-  const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL || 'file:./dev.db' })
+  const dbUrl = process.env.DATABASE_URL || 'file:./dev.db'
+  const isPostgres = dbUrl.startsWith('postgresql://') || dbUrl.startsWith('postgres://')
+
+  if (isPostgres) {
+    return new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    })
+  }
+
+  const { PrismaLibSql } = require('@prisma/adapter-libsql')
+  const adapter = new PrismaLibSql({ url: dbUrl })
   return new PrismaClient({
     adapter,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
