@@ -578,4 +578,92 @@ app.get('/sqftlab/stats', async (c) => {
   return c.json({ communityCount, transactionCount, listingCount, dealCount, topCommunities })
 })
 
-export default app
+// ─── Cron: Hourly scrape + Telegram alerts ─────────────────────────────────
+
+app.get('/sqftlab/cron/scrape', async (c) => {
+  const secret = c.req.query('secret')
+  if (secret !== process.env.CRON_SECRET && secret !== 'sqrtlab-cron-2026') {
+    return c.json({ error: 'unauthorized' }, 401)
+  }
+
+  const startedAt = new Date()
+  let logId = ''
+
+  try {
+    // Create scrape log entry
+    const log = await prisma.scrapeLog.create({
+      data: { startedAt, completedAt: startedAt, status: 'running', startedAt },
+    })
+    logId = log.id
+
+    // Trigger internal scrape via same logic as /sqftlab/scrape
+    const scrapeRes = await fetch(`http://localhost:${process.env.PORT || 3001}/api/sqftlab/scrape?secret=sqrtlab-cron-2026`)
+    const result = await scrapeRes.json()
+
+    const completedAt = new Date()
+    const elapsed = Math.round((completedAt.getTime() - startedAt.getTime()) / 1000)
+
+    // Update log
+    await prisma.scrapeLog.update({
+      where: { id: logId },
+      data: {
+        completedAt,
+        status: result.ok ? 'success' : 'failed',
+        listingsSaved: result.saved ?? 0,
+        listingsDeleted: result.deleted ?? 0,
+        totalListings: result.totalListings ?? 0,
+        communities: result.communities ?? 0,
+        elapsedSeconds: elapsed,
+        errorMessage: result.ok ? null : JSON.stringify(result),
+      },
+    })
+
+    // Send Telegram notification
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN
+    const telegramChatId = process.env.TELEGRAM_CHAT_ID
+    if (telegramToken && telegramChatId) {
+      const msg = `🏗️ *sqrtLab Scrape Complete*\n` +
+        `📅 ${completedAt.toISOString().replace('T', ' ').substring(0, 16)} UTC\n` +
+        `✅ Saved: ${result.saved ?? 0} listings\n` +
+        `🗑️ Cleaned: ${result.deleted ?? 0} old listings\n` +
+        `📊 Total: ${result.totalListings ?? 0} listings across ${result.communities ?? 0} communities\n` +
+        `⏱️ Duration: ${elapsed}s` +
+        (result.ok ? '' : `\n❌ Error: ${result.error || 'scrape failed'}`)
+
+      try {
+        await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: telegramChatId, text: msg, parse_mode: 'Markdown' }),
+          signal: AbortSignal.timeout(5000),
+        })
+      } catch {}
+    }
+
+    return c.json({ ok: true, logId, result })
+  } catch (err: any) {
+    // Update log with error
+    if (logId) {
+      try {
+        await prisma.scrapeLog.update({
+          where: { id: logId },
+          data: { completedAt: new Date(), status: 'failed', errorMessage: err.message },
+        })
+      } catch {}
+    }
+    return c.json({ ok: false, error: err.message }, 500)
+  }
+})
+
+// ─── Scrape logs ─────────────────────────────────────────────────────────
+
+app.get('/sqftlab/cron/logs', async (c) => {
+  const limit = parseInt(c.req.query('limit') || '20')
+  const logs = await prisma.scrapeLog.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+  })
+  return c.json({ logs })
+})
+
+// ─── Stats for dashboard ─────────────────────────────────────────────────

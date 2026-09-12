@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 // SHOGO:CUSTOM-END
 
@@ -180,4 +180,20 @@ model Alert {
 
   @@index([userId])
   @@map("alerts")
+}
+
+model ScrapeLog {
+  id              String   @id @default(cuid())
+  startedAt       DateTime @map("started_at")
+  completedAt     DateTime @map("completed_at")
+  status          String   // running, success, failed
+  listingsSaved   Int      @default(0) @map("listings_saved")
+  listingsDeleted Int      @default(0) @map("listings_deleted")
+  totalListings   Int      @default(0) @map("total_listings")
+  communities     Int      @default(0)
+  elapsedSeconds  Int      @default(0) @map("elapsed_seconds")
+  errorMessage    String?  @map("error_message")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("scrape_logs")
 }

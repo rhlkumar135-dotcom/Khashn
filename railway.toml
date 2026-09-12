@@ -1,5 +1,5 @@
 name = "sqftlab"
-description = "sqftLab - UAE Property Intelligence Platform"
+description = "sqrtLab - UAE Property Intelligence Platform"
 
 [build]
 builder = "NIXPACKS"
