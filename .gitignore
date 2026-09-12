@@ -14,3 +14,4 @@ src/generated/
 .memory-index.db
 .memory-index.db-wal
 .memory-index.db-shm
+.github/

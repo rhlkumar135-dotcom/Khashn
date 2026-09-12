@@ -100,6 +100,10 @@ function parseListing(property: any, source: string, purpose: string) {
   const furnished = property.furnished === 'furnished' ? 'furnished' : property.furnished === 'semi_furnished' ? 'semi_furnished' : 'unfurnished'
   const completion = property.completion_status === 'off_plan' ? 'off_plan' : 'ready'
 
+  const sourceUrl = property.url
+    ? `https://www.propertyfinder.ae${property.url.startsWith('/') ? '' : '/'}${property.url}`
+    : `https://www.propertyfinder.ae/en/search?c=${purpose === 'sale' ? 1 : 2}&l=${location.slug ?? ''}`
+
   return {
     externalId: `${source}_${property.id}`,
     source,
@@ -116,6 +120,7 @@ function parseListing(property: any, source: string, purpose: string) {
     agencyName,
     title,
     imageUrl,
+    sourceUrl,
     latitude: lat,
     longitude: lon,
     listedAt: new Date(listedDate),
@@ -204,6 +209,7 @@ async function scrapeArea(area: { name: string; locationId: string; slug: string
               agencyName: parsed.agencyName,
               title: parsed.title,
               imageUrl: parsed.imageUrl,
+              sourceUrl: parsed.sourceUrl,
               latitude: parsed.latitude,
               longitude: parsed.longitude,
               listedAt: parsed.listedAt,
@@ -215,6 +221,7 @@ async function scrapeArea(area: { name: string; locationId: string; slug: string
               areaSqft: parsed.areaSqft,
               title: parsed.title,
               imageUrl: parsed.imageUrl,
+              sourceUrl: parsed.sourceUrl,
               agentName: parsed.agentName,
               agencyName: parsed.agencyName,
               scrapedAt: new Date(),

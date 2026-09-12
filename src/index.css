@@ -6,42 +6,44 @@
 @plugin "tailwindcss-animate";
 
 /* ─── sqftLab Design Tokens ────────────────────────────────────────────────
-   Source: Khashn_UAE_PropTech_Documentation_v1.docx §2.2
-   Philosophy: "precise, restrained, confident — private banking interface"
-   The single bold choice: gold on midnight. Everything else serves that pair.
+   Glass-like blue & white theme. Clean, modern, transparent feel.
    ──────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --background: #F8F6F2;
-  --foreground: #0A0A0A;
-  --card: #FFFFFF;
-  --card-foreground: #0A0A0A;
+  --background: #EEF4FB;
+  --foreground: #0F172A;
+  --card: rgba(255,255,255,0.85);
+  --card-foreground: #0F172A;
   --popover: #FFFFFF;
-  --popover-foreground: #0A0A0A;
-  --primary: #0A2540;
+  --popover-foreground: #0F172A;
+  --primary: #1E40AF;
   --primary-foreground: #FFFFFF;
-  --secondary: #F5F0E8;
-  --secondary-foreground: #0A2540;
-  --muted: #F5F0E8;
-  --muted-foreground: #6B6860;
-  --accent: #C8A96E;
-  --accent-foreground: #0A2540;
-  --destructive: #B91C1C;
-  --border: #C9C5BB;
-  --input: #C9C5BB;
-  --ring: #C8A96E;
-  --radius: 0.5rem;
+  --secondary: #DBEAFE;
+  --secondary-foreground: #1E3A8A;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #3B82F6;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --border: rgba(148,163,184,0.3);
+  --input: rgba(148,163,184,0.3);
+  --ring: #3B82F6;
+  --radius: 0.75rem;
 
   /* sqftLab brand tokens */
-  --sqftlab-navy: #0A2540;
-  --sqftlab-gold: #C8A96E;
-  --sqftlab-teal: #0E7C6E;
-  --sqftlab-sand: #F5F0E8;
-  --sqftlab-danger: #B91C1C;
+  --sqftlab-blue: #1E40AF;
+  --sqftlab-blue-light: #3B82F6;
+  --sqftlab-blue-dark: #1E3A8A;
+  --sqftlab-sky: #0EA5E9;
+  --sqftlab-cyan: #06B6D4;
+  --sqftlab-danger: #DC2626;
+  --sqftlab-success: #059669;
+  --sqftlab-glass: rgba(255,255,255,0.7);
+  --sqftlab-glass-border: rgba(255,255,255,0.3);
   --sqftlab-surface: #FFFFFF;
-  --sqftlab-surface-2: #F8F6F2;
-  --sqftlab-ink: #0A0A0A;
-  --sqftlab-muted: #6B6860;
+  --sqftlab-surface-2: #F8FAFC;
+  --sqftlab-ink: #0F172A;
+  --sqftlab-muted: #64748B;
 }
 
 @theme inline {
